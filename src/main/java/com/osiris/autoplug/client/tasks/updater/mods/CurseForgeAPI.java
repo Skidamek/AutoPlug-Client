@@ -45,7 +45,10 @@ public class CurseForgeAPI {
         String type = ".jar";
         String downloadUrl = null;
         byte code = 0;
-        String modInfo = mod.name + "/" + (Server.isFabric ? "fabric" : "forge");
+        String modLoader = "forge";
+        if (Server.isFabric) modLoader = "fabric";
+        if (Server.isQuilt) modLoader = "quilt";
+        String modInfo = mod.name + "/" + modLoader;
         try {
             if (!isIdNumber) { // Determine project id, since we only got slug
                 try {
@@ -91,24 +94,27 @@ public class CurseForgeAPI {
                 }
 
                 // If the release has no fabric or forge tag, then we expect only forge support.
-                if (Server.isFabric) { // FABRIC
-                    for (JsonElement el : tempRelease.get("gameVersions").getAsJsonArray()) { // check if game versions contain fabric
+                if (Server.isFabric || Server.isQuilt) { // FABRIC & QUILT (quilt support fabric mods but fabric doesn't support quilt mods)
+                    for (JsonElement el : tempRelease.get("gameVersions").getAsJsonArray()) { // check if game versions contain fabric or quilt
                         if (StringUtils.containsIgnoreCase(el.getAsString(), "fabric")) {
+                            isModLoaderCompatible = true;
+                            break;
+                        } else if (StringUtils.containsIgnoreCase(el.getAsString(), "quilt") && Server.isQuilt) {
                             isModLoaderCompatible = true;
                             break;
                         }
                     }
-                    if (checkNameForModLoader && !isModLoaderCompatible) // check if name contains fabric
-                        if (StringUtils.containsIgnoreCase(
-                                tempRelease.get("fileName").getAsString(),
-                                "fabric")) {
+                    if (checkNameForModLoader && !isModLoaderCompatible) // check if name contains fabric or quilt if not fabric
+                        if (StringUtils.containsIgnoreCase(tempRelease.get("fileName").getAsString(), "fabric")) {
+                            isModLoaderCompatible = true;
+                        } else if (StringUtils.containsIgnoreCase(tempRelease.get("fileName").getAsString(), "quilt")) {
                             isModLoaderCompatible = true;
                         }
                 } else { // FORGE
-                    isModLoaderCompatible = true; // since no fabric/forge tag == forge is supported,
-                    // we only need to check if it has no fabric tag
+                    isModLoaderCompatible = true; // since no quilt/fabric/forge tag == forge is supported,
+                    // we only need to check if it has no fabric/quilt tag
                     for (JsonElement el : tempRelease.get("gameVersions").getAsJsonArray()) {
-                        if (StringUtils.containsIgnoreCase(el.getAsString(), "fabric")) {
+                        if (StringUtils.containsIgnoreCase(el.getAsString(), "fabric") && StringUtils.containsIgnoreCase(el.getAsString(), "quilt")) {
                             isModLoaderCompatible = false;
                             break;
                         }

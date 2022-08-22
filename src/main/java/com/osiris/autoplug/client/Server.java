@@ -44,6 +44,7 @@ public final class Server {
      * True if current dir contains the .fabric folder.
      */
     public static boolean isFabric;
+    public static boolean isQuilt;
     @Nullable
     public static AsyncInputStream ASYNC_SERVER_IN;
     private static Process process;
@@ -51,10 +52,13 @@ public final class Server {
     private static boolean colorServerLog;
 
     static {
-        for (File f :
-                new File(System.getProperty("user.dir")).listFiles()) {
+        for (File f : new File(System.getProperty("user.dir")).listFiles()) {
             if (f.getName().equals(".fabric")) {
                 isFabric = true;
+                break;
+            }
+            if (f.getName().equals(".quilt")) {
+                isQuilt = true;
                 break;
             }
         }

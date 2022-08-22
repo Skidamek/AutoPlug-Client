@@ -34,12 +34,15 @@ public class ModrinthAPI {
 
     /**
      * Requires a modrithId (chars or number), or curseforgeId (no number, but chars).
-     * If the id contains chars its usually the mods slugs.
+     * If the id contains chars it's usually the mods slugs.
      */
     public SearchResult searchUpdate(MinecraftMod mod, String mcVersion) {
         if (mod.modrinthId == null && !isInt(mod.curseforgeId)) mod.modrinthId = mod.curseforgeId; // Slug
+        String modLoader = "forge";
+        if (Server.isFabric) modLoader = "fabric";
+        if (Server.isQuilt) modLoader = "quilt";
         String url = baseUrl + "/project/" + mod.modrinthId + "/version?loaders=[\"" +
-                (Server.isFabric ? "fabric" : "forge") + "\"]&game_versions=[\"" + mcVersion + "\"]";
+                modLoader + "\"]&game_versions=[\"" + mcVersion + "\"]";
         url = new UtilsURL().clean(url);
         Exception exception = null;
         String latest = null;
@@ -58,8 +61,8 @@ public class ModrinthAPI {
             } catch (Exception e) {
                 if (!isInt(mod.modrinthId)) { // Try another url, with slug replaced _ with -
                     url = baseUrl + "/project/" + mod.modrinthId.replace("_", "-")
-                            + "/version?loaders=[\"" +
-                            (Server.isFabric ? "fabric" : "forge") + "\"]&game_versions=[\"" + mcVersion + "\"]";
+                            + "/version?loaders=[\"" + modLoader
+                            + "\"]&game_versions=[\"" + mcVersion + "\"]";
                     AL.debug(this.getClass(), url);
                     release = Json.fromUrlAsJsonArray(url)
                             .get(0).getAsJsonObject();
