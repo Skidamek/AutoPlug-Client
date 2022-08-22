@@ -224,13 +224,12 @@ public class UtilsMinecraft {
                         }
                         mods.add(new MinecraftMod(jar.getPath(), name, version, author, null, bukkitId, null));
                     } else if (filePath.endsWith("fabric.mod.json")) { // Fabric mod
-                        System.out.println("Fabric mod found!");
                         found = true;
                         JsonObject obj = JsonParser.parseReader(new InputStreamReader(zipFile.getInputStream(entry))).getAsJsonObject();
                         String name = obj.get("name").getAsString();
                         //if (name==null || name.isEmpty()){ // In this case use the jars name as name
                         //    name = jar.getName();
-                        //} // Don't do this, because the jars name contains its version and generally it wouldn't be nice
+                        //} // Don't do this, because the jars name contains its version, and generally it wouldn't be nice
                         String version = obj.get("version").getAsString();
                         JsonElement authorRaw = obj.get("author");
                         JsonElement authorsRaw = obj.get("authors");
@@ -245,7 +244,6 @@ public class UtilsMinecraft {
                         String modrinthId = obj.get("id").getAsString();
                         mods.add(new MinecraftMod(jar.getPath(), name, version, author, modrinthId, null, null));
                     } else if (filePath.endsWith("quilt.mod.json") && Server.isQuilt) { // Quilt mod
-                        System.out.println("Quilt mod found!");
                         found = true;
                         JsonObject obj = JsonParser.parseReader(new InputStreamReader(zipFile.getInputStream(entry))).getAsJsonObject();
 
@@ -255,7 +253,7 @@ public class UtilsMinecraft {
 
                         JsonObject quiltMetaObj = quiltObj.get("metadata").getAsJsonObject();
                         String name = quiltMetaObj.get("name").getAsString();
-                        Object authorRaw = quiltMetaObj.get("contributors"); // to get the username of first author
+                        Object authorRaw = quiltMetaObj.get("contributors"); // Return the username of first author
                         String author = authorRaw.toString();
                         author = author.split("\":")[0];
                         author = author.replace("{\"", "");

@@ -104,15 +104,15 @@ public class CurseForgeAPI {
                             break;
                         }
                     }
-                    if (checkNameForModLoader && !isModLoaderCompatible) // check if name contains fabric or quilt if not fabric
+                    if (checkNameForModLoader && !isModLoaderCompatible) // Check if name contains fabric or quilt if not fabric
                         if (StringUtils.containsIgnoreCase(tempRelease.get("fileName").getAsString(), "fabric")) {
                             isModLoaderCompatible = true;
-                        } else if (StringUtils.containsIgnoreCase(tempRelease.get("fileName").getAsString(), "quilt")) {
+                        } else if (StringUtils.containsIgnoreCase(tempRelease.get("fileName").getAsString(), "quilt") && Server.isQuilt) {
                             isModLoaderCompatible = true;
                         }
                 } else { // FORGE
-                    isModLoaderCompatible = true; // since no quilt/fabric/forge tag == forge is supported,
-                    // we only need to check if it has no fabric/quilt tag
+                    isModLoaderCompatible = true; // Since no quilt/fabric/forge tag == forge is supported,
+                    // We only need to check if it has no fabric/quilt tag
                     for (JsonElement el : tempRelease.get("gameVersions").getAsJsonArray()) {
                         if (StringUtils.containsIgnoreCase(el.getAsString(), "fabric") && StringUtils.containsIgnoreCase(el.getAsString(), "quilt")) {
                             isModLoaderCompatible = false;
