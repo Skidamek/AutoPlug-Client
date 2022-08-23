@@ -55,10 +55,12 @@ public final class Server {
         for (File f : new File(System.getProperty("user.dir")).listFiles()) {
             if (f.getName().equals(".fabric")) {
                 isFabric = true;
+                isQuilt = false;
                 break;
             }
             if (f.getName().equals(".quilt")) {
                 isQuilt = true;
+                isFabric = false;
                 break;
             }
         }

@@ -41,8 +41,8 @@ public class ModrinthAPI {
         String modLoader = "forge";
         if (Server.isFabric) modLoader = "fabric";
         if (Server.isQuilt) modLoader = "quilt";
-        String url = baseUrl + "/project/" + mod.modrinthId + "/version?loaders=[\"" +
-                modLoader + "\"]&game_versions=[\"" + mcVersion + "\"]";
+        String url = baseUrl + "/project/" + mod.modrinthId +
+                "/version?loaders=[\"" + modLoader + "\"]&game_versions=[\"" + mcVersion + "\"]";
         url = new UtilsURL().clean(url);
         Exception exception = null;
         String latest = null;
@@ -60,9 +60,8 @@ public class ModrinthAPI {
                         .get(0).getAsJsonObject();
             } catch (Exception e) {
                 if (!isInt(mod.modrinthId)) { // Try another url, with slug replaced _ with -
-                    url = baseUrl + "/project/" + mod.modrinthId.replace("_", "-")
-                            + "/version?loaders=[\"" + modLoader
-                            + "\"]&game_versions=[\"" + mcVersion + "\"]";
+                    url = baseUrl + "/project/" + mod.modrinthId.replace("_", "-") +
+                            "/version?loaders=[\"" + modLoader + "\"]&game_versions=[\"" + mcVersion + "\"]";
                     AL.debug(this.getClass(), url);
                     release = Json.fromUrlAsJsonArray(url)
                             .get(0).getAsJsonObject();

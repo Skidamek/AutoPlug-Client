@@ -96,18 +96,18 @@ public class CurseForgeAPI {
                 // If the release has no fabric or forge tag, then we expect only forge support.
                 if (Server.isFabric || Server.isQuilt) { // FABRIC & QUILT (quilt support fabric mods but fabric doesn't support quilt mods)
                     for (JsonElement el : tempRelease.get("gameVersions").getAsJsonArray()) { // check if game versions contain fabric or quilt
-                        if (StringUtils.containsIgnoreCase(el.getAsString(), "fabric")) {
+                        if (Server.isQuilt && StringUtils.containsIgnoreCase(el.getAsString(), "quilt")) {
                             isModLoaderCompatible = true;
                             break;
-                        } else if (StringUtils.containsIgnoreCase(el.getAsString(), "quilt") && Server.isQuilt) {
+                        } else if (StringUtils.containsIgnoreCase(el.getAsString(), "fabric")) {
                             isModLoaderCompatible = true;
                             break;
                         }
                     }
                     if (checkNameForModLoader && !isModLoaderCompatible) // Check if name contains fabric or quilt if not fabric
-                        if (StringUtils.containsIgnoreCase(tempRelease.get("fileName").getAsString(), "fabric")) {
+                        if (Server.isQuilt && StringUtils.containsIgnoreCase(tempRelease.get("fileName").getAsString(), "quilt")) {
                             isModLoaderCompatible = true;
-                        } else if (StringUtils.containsIgnoreCase(tempRelease.get("fileName").getAsString(), "quilt") && Server.isQuilt) {
+                        } else if (StringUtils.containsIgnoreCase(tempRelease.get("fileName").getAsString(), "fabric")) {
                             isModLoaderCompatible = true;
                         }
                 } else { // FORGE

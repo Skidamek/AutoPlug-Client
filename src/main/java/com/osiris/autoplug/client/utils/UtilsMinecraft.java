@@ -223,6 +223,22 @@ public class UtilsMinecraft {
                         } catch (Exception e) {
                         }
                         mods.add(new MinecraftMod(jar.getPath(), name, version, author, null, bukkitId, null));
+                    } else if (Server.isQuilt && filePath.endsWith("quilt.mod.json")) { // Quilt mod
+                        found = true;
+                        JsonObject obj = JsonParser.parseReader(new InputStreamReader(zipFile.getInputStream(entry))).getAsJsonObject();
+
+                        JsonObject quiltObj = obj.get("quilt_loader").getAsJsonObject();
+                        String version = quiltObj.get("version").getAsString();
+                        String modrinthId = quiltObj.get("id").getAsString();
+
+                        JsonObject quiltMetaObj = quiltObj.get("metadata").getAsJsonObject();
+                        String name = quiltMetaObj.get("name").getAsString();
+                        Object authorRaw = quiltMetaObj.get("contributors"); // Return the username of first author
+                        String author = authorRaw.toString();
+                        author = author.split("\":")[0];
+                        author = author.replace("{\"", "");
+
+                        mods.add(new MinecraftMod(jar.getPath(), name, version, author, modrinthId, null, null));
                     } else if (filePath.endsWith("fabric.mod.json")) { // Fabric mod
                         found = true;
                         JsonObject obj = JsonParser.parseReader(new InputStreamReader(zipFile.getInputStream(entry))).getAsJsonObject();
@@ -242,22 +258,6 @@ public class UtilsMinecraft {
 
                         // Also check for ids in the config
                         String modrinthId = obj.get("id").getAsString();
-                        mods.add(new MinecraftMod(jar.getPath(), name, version, author, modrinthId, null, null));
-                    } else if (filePath.endsWith("quilt.mod.json") && Server.isQuilt) { // Quilt mod
-                        found = true;
-                        JsonObject obj = JsonParser.parseReader(new InputStreamReader(zipFile.getInputStream(entry))).getAsJsonObject();
-
-                        JsonObject quiltObj = obj.get("quilt_loader").getAsJsonObject();
-                        String version = quiltObj.get("version").getAsString();
-                        String modrinthId = quiltObj.get("id").getAsString();
-
-                        JsonObject quiltMetaObj = quiltObj.get("metadata").getAsJsonObject();
-                        String name = quiltMetaObj.get("name").getAsString();
-                        Object authorRaw = quiltMetaObj.get("contributors"); // Return the username of first author
-                        String author = authorRaw.toString();
-                        author = author.split("\":")[0];
-                        author = author.replace("{\"", "");
-
                         mods.add(new MinecraftMod(jar.getPath(), name, version, author, modrinthId, null, null));
                     }
                     if (found) break;
